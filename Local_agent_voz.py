@@ -9,7 +9,7 @@ import os
 
 # --- CONFIGURACIÓN ---
 API_URL = os.getenv("API_URL", "http://localhost:8000")
-MODELO = os.getenv("OLLAMA_MODEL", "llama3.2")
+MODELO = os.getenv("OLLAMA_MODEL", "qwen2.5:0.5b")
 PIPER_BIN = "./piper/piper" # Ajusta según tu ruta de Piper
 VOZ_MODELO = "voz_es.onnx"
 
@@ -19,7 +19,16 @@ modelo_escucha = Model("modelo_vosk")
 
 def escuchar_cliente():
     """Captura el audio del micrófono y lo convierte a texto de forma offline."""
-    reconocedor = KaldiRecognizer(modelo_escucha, 16000)
+    if not os.path.exists("modelo_vosk"):
+        print("❌ ERROR: No se encontró la carpeta 'modelo_vosk'.")
+        return ""
+    
+    try:
+        reconocedor = KaldiRecognizer(modelo_escucha, 16000)
+    except Exception as e:
+        print(f"❌ ERROR al inicializar KaldiRecognizer: {e}")
+        return ""
+        
     microfono = pyaudio.PyAudio()
     
     stream = microfono.open(format=pyaudio.paInt16, channels=1, 
@@ -55,20 +64,35 @@ def escuchar_cliente():
 
 def hablar(texto):
     print(f"🤖 Agente dice: {texto}")
+    if not os.path.exists(PIPER_BIN):
+        print(f"❌ ERROR: No se encontró el binario de Piper en {PIPER_BIN}")
+        return
+    if not os.path.exists(VOZ_MODELO):
+        print(f"❌ ERROR: No se encontró el modelo de voz {VOZ_MODELO}")
+        return
+
     clean_text = texto.replace('"', '').replace('#', '')
-    cmd = f'echo "{clean_text}" | {PIPER_BIN} --model {VOZ_MODELO} --output_file salida.wav'
-    subprocess.run(cmd, shell=True, check=True)
-    subprocess.run("aplay -q salida.wav", shell=True)
+    try:
+        cmd = f'echo "{clean_text}" | {PIPER_BIN} --model {VOZ_MODELO} --output_file salida.wav'
+        subprocess.run(cmd, shell=True, check=True)
+        subprocess.run("aplay -q salida.wav", shell=True)
+    except Exception as e:
+        print(f"❌ Error en TTS/Audio: {e}")
 
 def decodificar_y_vender(texto_cliente, catalogo_sabores):
     """Convierte la voz a JSON usando Ollama y valida con FastAPI."""
+    # Formato más claro para modelos pequeños
     mensaje_sistema = f"""
-    Eres un extractor de datos de una heladería. 
-    Tu único objetivo es extraer el sabor y la cantidad del pedido basándote en este catálogo: 
+    Eres un asistente que solo extrae datos.
+    Lista de sabores disponibles:
     {catalogo_sabores}
-    
-    Responde ÚNICAMENTE con un JSON válido con esta estructura exacta: {{"idSabor": ID_NUMERICO, "cantidad": CANTIDAD_NUMERICA}}
-    Si no logras identificar el pedido, responde: {{"error": "No entendí"}}
+
+    Instrucciones:
+    1. Escucha el sabor que pide el cliente.
+    2. Busca el ID correspondiente en la lista de arriba.
+    3. Si dice "un", "una" o no dice cantidad, usa 1.
+    4. Responde SOLO con JSON: {{"idSabor": ID, "cantidad": CANTIDAD}}
+    5. Si el sabor no existe, responde: {{"error": "no_existe"}}
     """
 
     # Forzamos a Llama 3.2 a devolver formato JSON
@@ -86,32 +110,30 @@ def decodificar_y_vender(texto_cliente, catalogo_sabores):
 
     try:
         datos_pedido = json.loads(texto_json)
+        print(f"DEBUG: JSON procesado: {datos_pedido}")
 
-        if "error" in datos_pedido:
-            return "Lo siento, no logré entender qué sabor o cuántos quieres. ¿Puedes repetirlo?"
+        if "error" in datos_pedido or not datos_pedido.get("idSabor"):
+            return "Lo siento, no logré entender qué sabor quieres. ¿Puedes repetirlo?"
 
-        # 1. Adaptamos el JSON al modelo Pydantic 'Venta' de tu FastAPI
         payload_api = {
             "items": [
                 {
-                    "idSabor": datos_pedido.get("idSabor"),
-                    "cantidad": datos_pedido.get("cantidad")
+                    "idSabor": int(datos_pedido.get("idSabor")),
+                    "cantidad": int(datos_pedido.get("cantidad", 1))
                 }
             ]
         }
 
-        # 2. Hacemos la petición a la ruta CORRECTA (/ventas)
+        print(f"DEBUG: Enviando a API: {payload_api}")
         respuesta_api = requests.post(f"{API_URL}/ventas", json=payload_api)
 
-        # 3. Evaluamos la respuesta de la API
         if respuesta_api.status_code == 200:
-            return "¡Excelente elección! Tu pedido ha sido procesado y descontado del inventario."
-        elif respuesta_api.status_code == 400:
-            detalle_error = respuesta_api.json().get("detail", "No se pudo realizar la venta.")
-            return f"Hubo un problema con tu pedido. {detalle_error}. ¿Te gustaría probar otro sabor?"
+            print("DEBUG: Venta exitosa")
+            return "¡Excelente elección! Pedido procesado y descontado del inventario."
         else:
-            print(f"DEBUG API ERROR: {respuesta_api.status_code} - {respuesta_api.text}")
-            return "Hubo un error interno en el sistema al intentar procesar la venta."
+            error_msg = respuesta_api.json().get("detail", "Error desconocido")
+            print(f"DEBUG: Error API ({respuesta_api.status_code}): {error_msg}")
+            return f"Hubo un problema: {error_msg}"
 
     except json.JSONDecodeError:
         return "Hubo un problema interno procesando tu pedido, por favor intenta de nuevo."
@@ -124,18 +146,31 @@ def iniciar_agente():
         respuesta_catalogo = requests.get(f"{API_URL}/inventario")
         if respuesta_catalogo.status_code == 200:
             lista_sabores = respuesta_catalogo.json()
-            # Formateamos el catálogo para que la IA lo entienda fácil
-            catalogo_sabores = ", ".join([f'ID {s["id"]}: {s["nombre"]} (Stock: {s["stock"]})' for s in lista_sabores])
+            # Formateamos el catálogo sin mostrar el stock directamente para evitar confusiones de la IA
+            catalogo_sabores = ", ".join([f'ID {s["id"]}: {s["nombre"]}' for s in lista_sabores])
         else:
+            print(f"❌ Error API: {respuesta_catalogo.status_code}")
             catalogo_sabores = "Error al obtener catálogo."
     except requests.exceptions.ConnectionError:
         print("❌ ERROR: No se pudo conectar a la API. ¿Está Uvicorn encendido?")
         return
 
     print(f"Catálogo cargado: {catalogo_sabores}")
-    hablar("Hola, bienvenido. ¿Qué helado te gustaría llevar hoy?")
+    print("📢 Reproduciendo saludo inicial...")
+    hablar("Hola, bienvenido a la heladería. ¿Qué sabor te gustaría llevar hoy?")
     
     while True:
+        # 1. Refrescar el catálogo en cada iteración para detectar nuevos sabores/precios
+        try:
+            res_cat = requests.get(f"{API_URL}/inventario")
+            if res_cat.status_code == 200:
+                lista_sabores = res_cat.json()
+                catalogo_sabores = "\n".join([f'- Sabor: {s["nombre"]} (ID: {s["id"]})' for s in lista_sabores])
+            else:
+                catalogo_sabores = "Error al obtener catálogo."
+        except:
+            catalogo_sabores = "Error de conexión con API."
+
         usuario_input = escuchar_cliente()
         
         if "salir" in usuario_input.lower() or "adiós" in usuario_input.lower():

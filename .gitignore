@@ -27,3 +27,6 @@ salida.wav
 *.db
 *.db-journal
 *.sqlite3
+
+expo.md
+*.log

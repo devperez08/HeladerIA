@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HeladerIA — Documentación Técnica</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+    :root {
+      --pink:      #e91e8c;
+      --pink-dark: #c2185b;
+      --pink-soft: #f8bbd0;
+      --green:     #2e7d32;
+      --blue:      #1565c0;
+      --dark:      #1a1a2e;
+      --gray:      #6b7280;
+      --bg:        #f9fafb;
+      --white:     #ffffff;
+      --border:    #e5e7eb;
+      --code-bg:   #1e1e2e;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+
+    /* ── COVER ── */
+    .cover {
+      background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+      color: white;
+      padding: 80px 60px;
+      position: relative;
+      overflow: hidden;
+      page-break-after: always;
+    }
+    .cover::before {
+      content: '';
+      position: absolute;
+      top: -120px; right: -120px;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(233,30,140,0.25) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover::after {
+      content: '';
+      position: absolute;
+      bottom: -80px; left: -80px;
+      width: 350px; height: 350px;
+      background: radial-gradient(circle, rgba(21,101,192,0.2) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .cover-badge {
+      display: inline-block;
+      background: rgba(233,30,140,0.2);
+      border: 1px solid rgba(233,30,140,0.5);
+      color: #f48fb1;
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 16px;
+      border-radius: 50px;
+      margin-bottom: 28px;
+    }
+    .cover h1 {
+      font-size: 56px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #fff 40%, #f48fb1 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .cover h1 span { color: var(--pink); -webkit-text-fill-color: var(--pink); }
+    .cover .subtitle {
+      font-size: 18px;
+      font-weight: 300;
+      color: rgba(255,255,255,0.7);
+      max-width: 540px;
+      margin-bottom: 48px;
+    }
+    .cover-tags { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 48px; }
+    .tag {
+      background: rgba(255,255,255,0.08);
+      border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.85);
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-size: 13px;
+      font-weight: 500;
+    }
+    .cover-meta {
+      display: flex;
+      gap: 40px;
+      border-top: 1px solid rgba(255,255,255,0.1);
+      padding-top: 28px;
+    }
+    .cover-meta-item { font-size: 13px; color: rgba(255,255,255,0.5); }
+    .cover-meta-item strong { display: block; color: white; font-size: 15px; margin-bottom: 2px; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 60px 40px; }
+
+    /* ── TOC ── */
+    .toc {
+      background: white;
+      border-radius: 16px;
+      padding: 36px 40px;
+      margin-bottom: 48px;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+    }
+    .toc-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--pink);
+      margin-bottom: 20px;
+    }
+    .toc ol { padding-left: 20px; }
+    .toc li { margin-bottom: 6px; }
+    .toc a {
+      color: var(--dark);
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 14px;
+      transition: color .2s;
+    }
+    .toc a:hover { color: var(--pink); }
+
+    /* ── SECTIONS ── */
+    .section { margin-bottom: 64px; }
+    .section-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 28px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--pink-soft);
+    }
+    .section-num {
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 700;
+      flex-shrink: 0;
+    }
+    h2 { font-size: 26px; font-weight: 700; color: var(--dark); }
+    h3 { font-size: 19px; font-weight: 600; color: var(--dark); margin: 28px 0 12px; }
+    h4 { font-size: 15px; font-weight: 600; color: var(--gray); margin: 20px 0 8px; text-transform: uppercase; letter-spacing: 0.5px; }
+    p { margin-bottom: 14px; color: #374151; }
+
+    /* ── CARDS ── */
+    .card {
+      background: white;
+      border-radius: 14px;
+      padding: 24px 28px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 12px rgba(0,0,0,0.05);
+      margin-bottom: 16px;
+    }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .feature-card {
+      background: white;
+      border-radius: 14px;
+      padding: 20px 22px;
+      border: 1px solid var(--border);
+      border-left: 4px solid var(--pink);
+    }
+    .feature-card .icon { font-size: 24px; margin-bottom: 8px; }
+    .feature-card .title { font-size: 14px; font-weight: 700; color: var(--dark); margin-bottom: 4px; }
+    .feature-card .desc { font-size: 13px; color: var(--gray); line-height: 1.5; }
+
+    /* ── TABLES ── */
+    .table-wrap { overflow-x: auto; margin: 20px 0; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13.5px;
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    }
+    thead tr { background: linear-gradient(135deg, var(--pink), var(--pink-dark)); }
+    thead th { color: white; padding: 12px 16px; text-align: left; font-weight: 600; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+    tbody tr { border-bottom: 1px solid var(--border); transition: background .15s; }
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #fdf2f8; }
+    tbody td { padding: 11px 16px; color: #374151; vertical-align: top; }
+    tbody td:first-child { font-weight: 600; color: var(--dark); }
+
+    /* ── CODE ── */
+    pre {
+      background: var(--code-bg);
+      border-radius: 12px;
+      padding: 22px 24px;
+      overflow-x: auto;
+      margin: 16px 0 24px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    code {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      color: #cdd6f4;
+      line-height: 1.7;
+    }
+    p code, li code, td code {
+      background: #f3f4f6;
+      color: var(--pink-dark);
+      padding: 2px 7px;
+      border-radius: 5px;
+      font-size: 12.5px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Token colors */
+    .kw   { color: #cba6f7; } /* keyword/purple */
+    .str  { color: #a6e3a1; } /* string/green */
+    .cm   { color: #6c7086; } /* comment/gray */
+    .fn   { color: #89b4fa; } /* function/blue */
+    .num  { color: #fab387; } /* number/orange */
+    .cls  { color: #f9e2af; } /* class/yellow */
+    .op   { color: #89dceb; } /* operator/cyan */
+
+    /* ── ALERTS ── */
+    .alert {
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin: 16px 0;
+      font-size: 13.5px;
+      border-left: 4px solid;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+    .alert-icon { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .alert.info    { background: #eff6ff; border-color: #3b82f6; color: #1e40af; }
+    .alert.warning { background: #fffbeb; border-color: #f59e0b; color: #92400e; }
+    .alert.danger  { background: #fef2f2; border-color: #ef4444; color: #991b1b; }
+    .alert.success { background: #f0fdf4; border-color: #22c55e; color: #14532d; }
+
+    /* ── BADGE ── */
+    .badge {
+      display: inline-block;
+      padding: 2px 10px;
+      border-radius: 50px;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .badge-get    { background: #dbeafe; color: #1d4ed8; }
+    .badge-post   { background: #dcfce7; color: #15803d; }
+    .badge-put    { background: #fef3c7; color: #b45309; }
+    .badge-delete { background: #fee2e2; color: #b91c1c; }
+
+    /* ── ENDPOINT ROW ── */
+    .endpoint {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 13px 16px;
+      margin-bottom: 8px;
+      font-size: 13.5px;
+    }
+    .endpoint-path { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--dark); flex: 1; }
+    .endpoint-desc { color: var(--gray); font-size: 13px; flex: 2; }
+
+    /* ── ARCH DIAGRAM ── */
+    .arch-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px;
+      text-align: center;
+      margin: 20px 0;
+    }
+    .arch-row { display: flex; justify-content: center; gap: 16px; margin: 12px 0; flex-wrap: wrap; }
+    .arch-node {
+      background: linear-gradient(135deg, var(--pink), var(--pink-dark));
+      color: white;
+      border-radius: 10px;
+      padding: 12px 18px;
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 140px;
+      text-align: center;
+    }
+    .arch-node.blue { background: linear-gradient(135deg, #1565c0, #0d47a1); }
+    .arch-node.dark { background: linear-gradient(135deg, #374151, #1f2937); }
+    .arch-node.green { background: linear-gradient(135deg, #2e7d32, #1b5e20); }
+    .arch-node .node-icon { font-size: 20px; margin-bottom: 4px; }
+    .arch-node .node-sub { font-size: 10px; opacity: 0.8; margin-top: 2px; }
+    .arch-arrow { color: var(--gray); font-size: 20px; display: flex; align-items: center; }
+    .arch-label { font-size: 11px; color: var(--gray); margin-top: 4px; }
+
+    /* ── FLOW STEPS ── */
+    .flow {
+      border-left: 2px solid var(--pink-soft);
+      padding-left: 24px;
+      margin: 16px 0;
+    }
+    .flow-step {
+      position: relative;
+      margin-bottom: 16px;
+      font-size: 14px;
+    }
+    .flow-step::before {
+      content: attr(data-step);
+      position: absolute;
+      left: -36px;
+      top: 0;
+      background: var(--pink);
+      color: white;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .flow-step strong { color: var(--dark); }
+    .flow-step .code-inline {
+      font-family: 'JetBrains Mono', monospace;
+      background: #f3f4f6;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-size: 12px;
+      color: var(--pink-dark);
+    }
+
+    /* ── DB SCHEMA ── */
+    .db-table {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .db-table-header {
+      background: linear-gradient(135deg, #374151, #1f2937);
+      color: white;
+      padding: 10px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 600;
+      font-size: 13px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .db-col {
+      display: flex;
+      align-items: center;
+      padding: 8px 16px;
+      border-bottom: 1px solid var(--border);
+      font-size: 13px;
+      gap: 10px;
+    }
+    .db-col:last-child { border-bottom: none; }
+    .db-col-name { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--dark); min-width: 160px; }
+    .db-col-type { color: #3b82f6; font-family: 'JetBrains Mono', monospace; font-size: 12px; min-width: 80px; }
+    .db-col-info { color: var(--gray); font-size: 12px; }
+    .pk { background: #fef3c7; color: #b45309; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+    .fk { background: #dbeafe; color: #1d4ed8; padding: 1px 6px; border-radius: 4px; font-size: 10px; font-weight: 700; }
+
+    /* ── TRIGGER ── */
+    .trigger-card {
+      background: #fdf2f8;
+      border: 1px solid var(--pink-soft);
+      border-radius: 10px;
+      padding: 14px 18px;
+      margin-bottom: 10px;
+      font-size: 13.5px;
+    }
+    .trigger-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--pink-dark); }
+
+    /* ── PRINT ── */
+    @media print {
+      body { background: white; font-size: 13px; }
+      .cover { padding: 60px 40px; }
+      .container { padding: 40px 30px; }
+      .section { page-break-inside: avoid; }
+      pre { page-break-inside: avoid; }
+      table { page-break-inside: avoid; }
+      .arch-box { page-break-inside: avoid; }
+    }
+
+    /* ── FOOTER ── */
+    .footer {
+      background: var(--dark);
+      color: rgba(255,255,255,0.4);
+      text-align: center;
+      padding: 28px;
+      font-size: 12px;
+      margin-top: 60px;
+    }
+    .footer span { color: var(--pink); }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════ PORTADA ══════════════════════════ -->
+<div class="cover">
+  <div class="cover-badge">Documentación Técnica</div>
+  <h1>🍦 Heladera<span>IA</span></h1>
+  <p class="subtitle">Sistema inteligente de gestión para heladería con Inteligencia Artificial, asistente de voz offline y dashboard web profesional.</p>
+  <div class="cover-tags">
+    <span class="tag">🐍 Python 3.11</span>
+    <span class="tag">⚡ FastAPI</span>
+    <span class="tag">📊 Streamlit</span>
+    <span class="tag">🤖 Ollama LLM</span>
+    <span class="tag">🎙️ Vosk STT</span>
+    <span class="tag">🔊 Piper TTS</span>
+    <span class="tag">🐳 Docker</span>
+    <span class="tag">🍓 Raspberry Pi</span>
+  </div>
+  <div class="cover-meta">
+    <div class="cover-meta-item"><strong>Versión</strong>1.0</div>
+    <div class="cover-meta-item"><strong>Fecha</strong>Junio 2026</div>
+    <div class="cover-meta-item"><strong>Repositorio</strong>devperez08/HeladerIA</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- ══════ TABLA DE CONTENIDOS ══════ -->
+  <div class="toc">
+    <div class="toc-title">📋 Tabla de Contenidos</div>
+    <ol>
+      <li><a href="#s1">Descripción General</a></li>
+      <li><a href="#s2">Arquitectura del Sistema</a></li>
+      <li><a href="#s3">Tecnologías Utilizadas</a></li>
+      <li><a href="#s4">Estructura del Proyecto</a></li>
+      <li><a href="#s5">Base de Datos</a></li>
+      <li><a href="#s6">API REST — Backend</a></li>
+      <li><a href="#s7">Dashboard Web — Frontend</a></li>
+      <li><a href="#s8">Módulo de Inteligencia Artificial</a></li>
+      <li><a href="#s9">Agente de Voz Offline</a></li>
+      <li><a href="#s10">Flujo de Trabajo Completo</a></li>
+      <li><a href="#s11">Despliegue con Docker</a></li>
+      <li><a href="#s12">Despliegue en Raspberry Pi</a></li>
+    </ol>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 1. DESCRIPCIÓN GENERAL -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s1">
+    <div class="section-header">
+      <div class="section-num">1</div>
+      <h2>Descripción General</h2>
+    </div>
+    <p><strong>HeladerIA</strong> es un sistema de gestión integral para una heladería, diseñado para automatizar y digitalizar las operaciones del negocio mediante tecnología moderna de Inteligencia Artificial. El proyecto integra un backend robusto, una interfaz gráfica de usuario interactiva y un asistente inteligente capaz de tomar pedidos, tanto por texto como por voz, de manera completamente <em>offline</em>.</p>
+
+    <div class="card-grid">
+      <div class="feature-card">
+        <div class="icon">🤖</div>
+        <div class="title">Asistente IA de Chat</div>
+        <div class="desc">Chatbot que entiende lenguaje natural para tomar pedidos y resolver consultas sobre el menú.</div>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🎙️</div>
+        <div class="title">Agente de Voz Offline</div>
+        <div class="desc">Reconocimiento de voz en español sin internet (Vosk + Piper). Ciclo completo de audio.</div>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📦</div>
+        <div class="title">Gestión de Inventario</div>
+        <div class="desc">CRUD completo de sabores con control de stock automático via triggers SQLite.</div>
+      </div>
+      <div class="feature-card">
+        <div class="icon">💰</div>
+        <div class="title">Registro de Ventas</div>
+        <div class="desc">Registro manual y automático vía IA con historial detallado y transacciones seguras.</div>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🚚</div>
+        <div class="title">Gestión de Compras</div>
+        <div class="desc">Control de abastecimiento con actualización automática del stock al registrar entradas.</div>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🐳</div>
+        <div class="title">Docker + Raspberry Pi</div>
+        <div class="desc">Sistema completo contenedorizado con script de despliegue automatizado para Raspberry Pi 4.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 2. ARQUITECTURA -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s2">
+    <div class="section-header">
+      <div class="section-num">2</div>
+      <h2>Arquitectura del Sistema</h2>
+    </div>
+    <p>El sistema sigue una arquitectura de <strong>microservicios desacoplados</strong> donde cada componente se comunica a través de la API REST central.</p>
+
+    <div class="arch-box">
+      <div class="arch-label" style="margin-bottom:16px;font-weight:600;font-size:13px;">CAPA DE PRESENTACIÓN</div>
+      <div class="arch-row">
+        <div class="arch-node">
+          <div class="node-icon">🖥️</div>
+          Dashboard Streamlit
+          <div class="node-sub">App/App.py · Puerto 8501</div>
+        </div>
+        <div class="arch-node">
+          <div class="node-icon">🎙️</div>
+          Agente de Voz
+          <div class="node-sub">Local_agent_voz.py</div>
+        </div>
+        <div class="arch-node">
+          <div class="node-icon">💬</div>
+          Agente por Texto
+          <div class="node-sub">Local_agent_voz_texto.py</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:24px;color:#e91e8c;margin:8px 0;">↕ HTTP REST</div>
+      <div class="arch-label" style="margin-bottom:16px;font-weight:600;font-size:13px;">CAPA DE NEGOCIO</div>
+      <div class="arch-row">
+        <div class="arch-node blue">
+          <div class="node-icon">⚙️</div>
+          API FastAPI
+          <div class="node-sub">API/main.py · Puerto 8000</div>
+        </div>
+        <div class="arch-node dark">
+          <div class="node-icon">🧠</div>
+          Lógica de IA
+          <div class="node-sub">API/ai_logic.py</div>
+        </div>
+      </div>
+      <div style="text-align:center;font-size:24px;color:#e91e8c;margin:8px 0;">↕</div>
+      <div class="arch-label" style="margin-bottom:16px;font-weight:600;font-size:13px;">CAPA DE DATOS & IA</div>
+      <div class="arch-row">
+        <div class="arch-node green">
+          <div class="node-icon">🗄️</div>
+          SQLite
+          <div class="node-sub">DataBase/heladeria.db</div>
+        </div>
+        <div class="arch-node dark">
+          <div class="node-icon">🤖</div>
+          Ollama LLM
+          <div class="node-sub">qwen2.5:0.5b (local)</div>
+        </div>
+        <div class="arch-node dark">
+          <div class="node-icon">👂</div>
+          Vosk STT
+          <div class="node-sub">Reconocimiento de voz ES</div>
+        </div>
+        <div class="arch-node dark">
+          <div class="node-icon">🔊</div>
+          Piper TTS
+          <div class="node-sub">Síntesis de voz ES</div>
+        </div>
+      </div>
+    </div>
+
+    <h3>Comunicación entre Componentes</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Origen</th><th>Destino</th><th>Protocolo</th><th>Propósito</th></tr></thead>
+        <tbody>
+          <tr><td>Dashboard Streamlit</td><td>API FastAPI</td><td>HTTP REST</td><td>Todas las operaciones CRUD e IA</td></tr>
+          <tr><td>API FastAPI</td><td>SQLite</td><td>sqlite3 (local)</td><td>Lectura y escritura de datos</td></tr>
+          <tr><td>API / Agente de Voz</td><td>Ollama LLM</td><td>librería ollama</td><td>Chat conversacional y extracción JSON</td></tr>
+          <tr><td>Agente de Voz</td><td>API FastAPI</td><td>HTTP POST</td><td>Enviar ventas procesadas por voz</td></tr>
+          <tr><td>API FastAPI</td><td>Agente de Voz</td><td>subprocess.Popen</td><td>Encender/apagar el proceso de voz</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 3. TECNOLOGÍAS -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s3">
+    <div class="section-header">
+      <div class="section-num">3</div>
+      <h2>Tecnologías Utilizadas</h2>
+    </div>
+
+    <h3>Backend & API</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tecnología</th><th>Versión</th><th>Rol</th></tr></thead>
+        <tbody>
+          <tr><td>Python</td><td>3.11</td><td>Lenguaje principal del proyecto</td></tr>
+          <tr><td>FastAPI</td><td>0.135.1</td><td>Framework web para la API REST de alto rendimiento</td></tr>
+          <tr><td>Uvicorn</td><td>0.41.0</td><td>Servidor ASGI para ejecutar FastAPI</td></tr>
+          <tr><td>Pydantic</td><td>2.12.5</td><td>Validación y serialización de datos</td></tr>
+          <tr><td>SQLite</td><td>built-in</td><td>Base de datos embebida, sin servidor adicional</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Frontend & Dashboard</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tecnología</th><th>Versión</th><th>Rol</th></tr></thead>
+        <tbody>
+          <tr><td>Streamlit</td><td>1.55.0</td><td>Framework para el dashboard web interactivo</td></tr>
+          <tr><td>streamlit-option-menu</td><td>latest</td><td>Menú de navegación lateral con iconos</td></tr>
+          <tr><td>Requests</td><td>2.32.5</td><td>Llamadas HTTP del frontend a la API</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Inteligencia Artificial</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tecnología</th><th>Versión</th><th>Rol</th></tr></thead>
+        <tbody>
+          <tr><td>Ollama</td><td>0.6.1</td><td>Runtime para ejecutar modelos LLM localmente</td></tr>
+          <tr><td>qwen2.5:0.5b</td><td>—</td><td>Modelo ligero (500M params) para respuestas y extracción JSON</td></tr>
+          <tr><td>Vosk</td><td>0.3.45</td><td>Motor de reconocimiento de voz offline en español</td></tr>
+          <tr><td>vosk-model-small-es-0.42</td><td>—</td><td>Modelo acústico en español para Vosk</td></tr>
+          <tr><td>Piper TTS</td><td>2023.11</td><td>Sintetizador de voz offline de alta calidad</td></tr>
+          <tr><td>voz_es.onnx</td><td>—</td><td>Modelo de voz en español mexicano para Piper</td></tr>
+          <tr><td>PyAudio</td><td>0.2.14</td><td>Acceso al micrófono para captura de audio</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>DevOps & Despliegue</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tecnología</th><th>Rol</th></tr></thead>
+        <tbody>
+          <tr><td>Docker</td><td>Contenedorización de los servicios</td></tr>
+          <tr><td>Docker Compose</td><td>Orquestación de múltiples contenedores</td></tr>
+          <tr><td>Bash Scripts</td><td>Automatización del despliegue en Raspberry Pi</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 4. ESTRUCTURA -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s4">
+    <div class="section-header">
+      <div class="section-num">4</div>
+      <h2>Estructura del Proyecto</h2>
+    </div>
+    <pre><code>Heladeria/
+│
+├── 📁 <span class="fn">API/</span>                          <span class="cm"># Backend: API REST con FastAPI</span>
+│   ├── __init__.py
+│   ├── <span class="cls">main.py</span>                      <span class="cm"># Endpoints, lógica de negocio, rutas IA</span>
+│   └── <span class="cls">ai_logic.py</span>                  <span class="cm"># TTS (hablar) y extracción con Ollama</span>
+│
+├── 📁 <span class="fn">App/</span>                          <span class="cm"># Frontend: Dashboard Streamlit</span>
+│   ├── __init__.py
+│   └── <span class="cls">App.py</span>                       <span class="cm"># IA, Inventario, Ventas, Compras</span>
+│
+├── 📁 <span class="fn">DataBase/</span>                     <span class="cm"># Capa de datos</span>
+│   ├── __init__.py
+│   ├── <span class="cls">Conexion.py</span>                  <span class="cm"># Esquema SQLite y ruta a la BD</span>
+│   └── heladeria.db                 <span class="cm"># Archivo SQLite (base de datos real)</span>
+│
+├── 📁 <span class="fn">modelo_vosk/</span>                  <span class="cm"># Modelo Vosk en español (~39 MB)</span>
+├── 📁 <span class="fn">piper/</span>                        <span class="cm"># Binario Piper TTS</span>
+│
+├── 🐍 <span class="cls">Local_agent_voz.py</span>            <span class="cm"># Agente de voz completo (micrófono)</span>
+├── 🐍 <span class="cls">Local_agent_voz_texto.py</span>      <span class="cm"># Versión de prueba (entrada por teclado)</span>
+│
+├── 🐳 <span class="cls">Dockerfile</span>                    <span class="cm"># Imagen multi-arquitectura (x86 + ARM64)</span>
+├── 🐳 <span class="cls">docker-compose.yml</span>            <span class="cm"># Orquestación: api + app + voz</span>
+├── 📜 <span class="cls">deploy_raspberry.sh</span>           <span class="cm"># Despliegue automatizado Raspberry Pi</span>
+│
+├── 🗄️  script.sql                    <span class="cm"># Esquema SQL de referencia</span>
+├── 📋 requirements.txt              <span class="cm"># Dependencias Python</span>
+├── voz_es.onnx                      <span class="cm"># Modelo ONNX de voz en español MX</span>
+└── voz_es.onnx.json                 <span class="cm"># Configuración del modelo de voz</span></code></pre>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 5. BASE DE DATOS -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s5">
+    <div class="section-header">
+      <div class="section-num">5</div>
+      <h2>Base de Datos</h2>
+    </div>
+    <p>El sistema usa <strong>SQLite</strong> como motor de base de datos, embebida directamente en el proyecto. No requiere instalar ningún servidor de base de datos, lo que la hace perfecta para Raspberry Pi. La base de datos se crea y siembra automáticamente en el primer arranque.</p>
+
+    <h3>Esquema de Tablas</h3>
+    <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+
+      <div class="db-table">
+        <div class="db-table-header">🍦 sabores</div>
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">INTEGER</span><span class="pk">PK AUTO</span></div>
+        <div class="db-col"><span class="db-col-name">nombre</span><span class="db-col-type">TEXT</span><span class="db-col-info">UNIQUE NOT NULL</span></div>
+        <div class="db-col"><span class="db-col-name">precio</span><span class="db-col-type">REAL</span><span class="db-col-info">CHECK > 0</span></div>
+        <div class="db-col"><span class="db-col-name">stock</span><span class="db-col-type">INTEGER</span><span class="db-col-info">CHECK >= 0</span></div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header">💰 ventas</div>
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">INTEGER</span><span class="pk">PK AUTO</span></div>
+        <div class="db-col"><span class="db-col-name">fecha</span><span class="db-col-type">DATETIME</span><span class="db-col-info">DEFAULT NOW</span></div>
+        <div class="db-col"><span class="db-col-name">total</span><span class="db-col-type">REAL</span><span class="db-col-info">NOT NULL</span></div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header">📝 detalle_ventas</div>
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">INTEGER</span><span class="pk">PK AUTO</span></div>
+        <div class="db-col"><span class="db-col-name">venta_id</span><span class="db-col-type">INTEGER</span><span class="fk">FK ventas</span></div>
+        <div class="db-col"><span class="db-col-name">sabor_id</span><span class="db-col-type">INTEGER</span><span class="fk">FK sabores</span></div>
+        <div class="db-col"><span class="db-col-name">cantidad</span><span class="db-col-type">INTEGER</span><span class="db-col-info">NOT NULL</span></div>
+        <div class="db-col"><span class="db-col-name">precio_unitario</span><span class="db-col-type">REAL</span><span class="db-col-info">NOT NULL</span></div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header">🚚 compras</div>
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">INTEGER</span><span class="pk">PK AUTO</span></div>
+        <div class="db-col"><span class="db-col-name">fecha</span><span class="db-col-type">DATETIME</span><span class="db-col-info">DEFAULT NOW</span></div>
+        <div class="db-col"><span class="db-col-name">total_compra</span><span class="db-col-type">REAL</span><span class="db-col-info">NOT NULL</span></div>
+      </div>
+
+      <div class="db-table">
+        <div class="db-table-header">📦 detalle_compras</div>
+        <div class="db-col"><span class="db-col-name">id</span><span class="db-col-type">INTEGER</span><span class="pk">PK AUTO</span></div>
+        <div class="db-col"><span class="db-col-name">compra_id</span><span class="db-col-type">INTEGER</span><span class="fk">FK compras</span></div>
+        <div class="db-col"><span class="db-col-name">sabor_id</span><span class="db-col-type">INTEGER</span><span class="fk">FK sabores</span></div>
+        <div class="db-col"><span class="db-col-name">cantidad_comprada</span><span class="db-col-type">INTEGER</span><span class="db-col-info">NOT NULL</span></div>
+      </div>
+
+    </div>
+
+    <h3>Triggers Automáticos de Stock</h3>
+    <div class="alert success">
+      <div class="alert-icon">⚡</div>
+      <div>Gracias a los triggers, el stock <strong>nunca necesita actualizarse manualmente</strong>. Al registrar una venta o compra, la base de datos se actualiza de forma atómica y consistente.</div>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-name">actualizar_stock_venta</div>
+      <p style="margin:6px 0 0;font-size:13px;">Se ejecuta <code>AFTER INSERT ON detalle_ventas</code> → <strong>Descuenta</strong> la cantidad vendida del stock del sabor correspondiente.</p>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-name">actualizar_stock_compra</div>
+      <p style="margin:6px 0 0;font-size:13px;">Se ejecuta <code>AFTER INSERT ON detalle_compras</code> → <strong>Suma</strong> la cantidad comprada al stock del sabor correspondiente.</p>
+    </div>
+
+    <h3>Datos Semilla</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>ID</th><th>Nombre</th><th>Precio</th><th>Stock Inicial</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Vainilla</td><td>$3,500</td><td>50 uds</td></tr>
+          <tr><td>2</td><td>Chocolate</td><td>$4,000</td><td>40 uds</td></tr>
+          <tr><td>3</td><td>Fresa</td><td>$3,500</td><td>35 uds</td></tr>
+          <tr><td>4</td><td>Mango</td><td>$4,500</td><td>30 uds</td></tr>
+          <tr><td>5</td><td>Cookies and Cream</td><td>$5,000</td><td>25 uds</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 6. API REST -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s6">
+    <div class="section-header">
+      <div class="section-num">6</div>
+      <h2>API REST — Backend</h2>
+    </div>
+    <p>El backend está construido con <strong>FastAPI</strong> y centraliza toda la lógica de negocio. Se ejecuta con Uvicorn en el puerto <strong>8000</strong>. La documentación interactiva está disponible en <code>http://localhost:8000/docs</code>.</p>
+
+    <h3>🏥 Sistema</h3>
+    <div class="endpoint">
+      <span class="badge badge-get">GET</span>
+      <span class="endpoint-path">/health</span>
+      <span class="endpoint-desc">Verifica que la API está activa → <code>{"status": "online"}</code></span>
+    </div>
+
+    <h3>📦 Inventario</h3>
+    <div class="endpoint">
+      <span class="badge badge-get">GET</span>
+      <span class="endpoint-path">/inventario</span>
+      <span class="endpoint-desc">Retorna la lista completa de sabores con precio y stock</span>
+    </div>
+    <div class="endpoint">
+      <span class="badge badge-post">POST</span>
+      <span class="endpoint-path">/inventario</span>
+      <span class="endpoint-desc">Agrega un nuevo sabor — Body: <code>{nombre, precio, stock}</code></span>
+    </div>
+    <div class="endpoint">
+      <span class="badge badge-put">PUT</span>
+      <span class="endpoint-path">/inventario</span>
+      <span class="endpoint-desc">Actualiza un sabor existente — Body: <code>{id, nombre, precio, stock}</code></span>
+    </div>
+    <div class="endpoint">
+      <span class="badge badge-delete">DEL</span>
+      <span class="endpoint-path">/inventario/{sabor_id}</span>
+      <span class="endpoint-desc">Elimina un sabor (solo si no tiene ventas asociadas)</span>
+    </div>
+    <div class="alert warning">
+      <div class="alert-icon">⚠️</div>
+      <div>No se puede eliminar un sabor con ventas históricas. La API retorna <strong>HTTP 400</strong> con mensaje explicativo.</div>
+    </div>
+
+    <h3>💰 Ventas</h3>
+    <div class="endpoint">
+      <span class="badge badge-post">POST</span>
+      <span class="endpoint-path">/ventas</span>
+      <span class="endpoint-desc">Registra una venta — Body: <code>{"items": [{"idSabor": 1, "cantidad": 2}]}</code></span>
+    </div>
+    <div class="endpoint">
+      <span class="badge badge-get">GET</span>
+      <span class="endpoint-path">/ventas</span>
+      <span class="endpoint-desc">Retorna historial de ventas con detalles por ítem</span>
+    </div>
+
+    <h3>🚚 Compras</h3>
+    <div class="endpoint">
+      <span class="badge badge-post">POST</span>
+      <span class="endpoint-path">/compras</span>
+      <span class="endpoint-desc">Registra entrada de mercancía — Body: <code>{"items": [...], "total_compra": 0.0}</code></span>
+    </div>
+
+    <h3>🤖 Inteligencia Artificial</h3>
+    <div class="endpoint">
+      <span class="badge badge-post">POST</span>
+      <span class="endpoint-path">/ai/chat</span>
+      <span class="endpoint-desc">Procesa mensaje de texto y responde — Body: <code>{"message": "quiero 2 de fresa"}</code></span>
+    </div>
+    <div class="endpoint">
+      <span class="badge badge-get">GET</span>
+      <span class="endpoint-path">/ai/status</span>
+      <span class="endpoint-desc">Consulta si el agente de voz está activo → <code>{"voice_active": false}</code></span>
+    </div>
+    <div class="endpoint">
+      <span class="badge badge-post">POST</span>
+      <span class="endpoint-path">/ai/voice/toggle</span>
+      <span class="endpoint-desc">Enciende o apaga el agente de voz — Body: <code>{"active": true}</code></span>
+    </div>
+
+    <h3>Lógica de Venta con Transacciones</h3>
+    <p>La función <code>realizar_venta_interna()</code> usa transacciones SQLite atómicas que garantizan la integridad de los datos:</p>
+    <pre><code><span class="kw">def</span> <span class="fn">realizar_venta_interna</span>(items):
+    conn.<span class="fn">execute</span>(<span class="str">"BEGIN TRANSACTION"</span>)
+    <span class="kw">try</span>:
+        <span class="cm"># 1. Verifica stock de cada ítem</span>
+        <span class="cm"># 2. Inserta en tabla 'ventas'</span>
+        <span class="cm"># 3. Inserta en 'detalle_ventas'</span>
+        <span class="cm"># 4. Trigger actualiza stock automáticamente</span>
+        conn.<span class="fn">commit</span>()
+    <span class="kw">except</span>:
+        conn.<span class="fn">rollback</span>()  <span class="cm"># Si algo falla, se revierte todo</span>
+        <span class="kw">raise</span></code></pre>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 7. FRONTEND -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s7">
+    <div class="section-header">
+      <div class="section-num">7</div>
+      <h2>Dashboard Web — Frontend</h2>
+    </div>
+    <p>El frontend es una aplicación web interactiva construida con <strong>Streamlit</strong> en el puerto <strong>8501</strong>. Se comunica con la API mediante <code>requests</code> HTTP.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Página</th><th>Icono</th><th>Funcionalidades</th></tr></thead>
+        <tbody>
+          <tr><td>Panel IA</td><td>🤖</td><td>Chat con el asistente IA. Historial de conversación en sesión. Pedidos en lenguaje natural.</td></tr>
+          <tr><td>Inventario</td><td>📦</td><td>Tarjetas visuales por sabor. Agregar, editar y eliminar sabores. Stock en tiempo real.</td></tr>
+          <tr><td>Ventas</td><td>💰</td><td>Nueva venta con cálculo automático de totales. Historial detallado con expansión por venta.</td></tr>
+          <tr><td>Compras</td><td>🚚</td><td>Registro de abastecimiento. Historial de entradas de mercancía.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Diseño Visual</h3>
+    <div class="card">
+      <ul style="list-style:none;display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+        <li>🔤 <strong>Fuente:</strong> Google Fonts — Outfit (300–700)</li>
+        <li>🎨 <strong>Primario:</strong> Rosa <code>#e91e8c</code> → <code>#c2185b</code></li>
+        <li>💚 <strong>Precios:</strong> Verde <code>#2e7d32</code></li>
+        <li>🔵 <strong>Inversión:</strong> Azul <code>#1565c0</code></li>
+        <li>📱 <strong>Sidebar:</strong> Gradiente rosa con texto blanco</li>
+        <li>🃏 <strong>Tarjetas:</strong> Hover con elevación animada</li>
+      </ul>
+    </div>
+
+    <h3>Control del Agente de Voz</h3>
+    <p>En la barra lateral hay un <strong>toggle</strong> (interruptor) para encender o apagar el agente de voz en tiempo real. Al activarlo, el frontend llama a <code>POST /ai/voice/toggle</code> y la API lanza el proceso en segundo plano con <code>subprocess.Popen</code>.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 8. MÓDULO IA -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s8">
+    <div class="section-header">
+      <div class="section-num">8</div>
+      <h2>Módulo de Inteligencia Artificial</h2>
+    </div>
+    <p>El módulo de IA implementa una arquitectura <strong>híbrida</strong>: detección determinista en Python puro para la lógica crítica de negocio, con el LLM como respaldo conversacional.</p>
+
+    <h3>Flujo de Procesamiento del Chat</h3>
+    <div class="flow">
+      <div class="flow-step" data-step="1"><strong>Recibir mensaje</strong> del usuario y consultar el catálogo fresco desde la BD.</div>
+      <div class="flow-step" data-step="2"><strong>Detección Python puro</strong> (<span class="code-inline">detectar_pedido</span>): analiza intención de compra, cantidad y sabor sin depender del LLM.</div>
+      <div class="flow-step" data-step="3a">Si <strong>es un pedido válido</strong>: verificar stock → ejecutar <span class="code-inline">realizar_venta_interna()</span> → retornar confirmación con total y número de venta.</div>
+      <div class="flow-step" data-step="3b">Si <strong>el sabor no existe</strong>: listar todos los sabores disponibles amigablemente.</div>
+      <div class="flow-step" data-step="4">Si <strong>es una consulta</strong>: enviar al LLM (<span class="code-inline">qwen2.5:0.5b</span> via Ollama) con prompt minimalista → respuesta conversacional en 1 frase.</div>
+    </div>
+
+    <h3>Detección de Intención (Python Puro)</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Tipo</th><th>Palabras clave</th></tr></thead>
+        <tbody>
+          <tr><td>Preguntas / Consultas</td><td>"qué", "cómo", "hay", "precio", "cuánto", "disponible", "menú", "lista"</td></tr>
+          <tr><td>Intención de compra</td><td>"quiero", "dame", "quisiera", "pido", "nécdote", "tráeme", "véndeme", "compro"</td></tr>
+          <tr><td>Cantidades (palabras)</td><td>"un", "dos", "tres", "cuatro", "cinco"... hasta "cien"</td></tr>
+          <tr><td>Cantidades (dígitos)</td><td>Regex <code>\b\d+\b</code> — detecta cualquier número</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>Uso del LLM con Ollama</h3>
+    <pre><code><span class="cm"># Para consultas conversacionales (respuesta breve)</span>
+respuesta = ollama.<span class="fn">chat</span>(
+    model=<span class="str">"qwen2.5:0.5b"</span>,
+    messages=[{<span class="str">'role'</span>: <span class="str">'user'</span>, <span class="str">'content'</span>: prompt}]
+)
+
+<span class="cm"># Para extracción estructurada (pedidos de voz)</span>
+respuesta = ollama.<span class="fn">chat</span>(
+    model=<span class="str">"qwen2.5:0.5b"</span>,
+    messages=[...],
+    format=<span class="str">"json"</span>  <span class="cm"># Fuerza respuesta JSON estricta</span>
+)
+<span class="cm"># Resultado: {"idSabor": 3, "cantidad": 2}</span></code></pre>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 9. AGENTE DE VOZ -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s9">
+    <div class="section-header">
+      <div class="section-num">9</div>
+      <h2>Agente de Voz Offline</h2>
+    </div>
+    <p>El agente de voz (<code>Local_agent_voz.py</code>) implementa un ciclo completo de interacción por voz, <strong>100% offline</strong>, sin necesidad de internet.</p>
+
+    <h3>Pipeline de Procesamiento</h3>
+    <div class="arch-box">
+      <div class="arch-row">
+        <div class="arch-node"><div class="node-icon">🎤</div>Micrófono<div class="node-sub">PyAudio 16kHz PCM</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node dark"><div class="node-icon">👂</div>Vosk STT<div class="node-sub">Reconocimiento offline ES</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node dark"><div class="node-icon">🧠</div>Ollama LLM<div class="node-sub">Extrae JSON del pedido</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node blue"><div class="node-icon">⚙️</div>FastAPI<div class="node-sub">POST /ventas</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node dark"><div class="node-icon">🔊</div>Piper TTS<div class="node-sub">Genera audio .wav</div></div>
+        <div class="arch-arrow">→</div>
+        <div class="arch-node green"><div class="node-icon">🔈</div>Altavoz<div class="node-sub">aplay ALSA</div></div>
+      </div>
+    </div>
+
+    <h3>Componentes Principales</h3>
+
+    <h4>1. escuchar_cliente() — Captura de Audio</h4>
+    <ul style="margin-left:20px;margin-bottom:16px;font-size:14px;line-height:2;">
+      <li>PyAudio abre el micrófono en formato PCM 16-bit mono a <strong>16,000 Hz</strong></li>
+      <li>Procesa en chunks de 4,000 frames para baja latencia</li>
+      <li>Muestra resultados parciales en tiempo real mientras el usuario habla</li>
+      <li>Se detiene cuando Vosk entrega un resultado final (<code>AcceptWaveform → True</code>)</li>
+    </ul>
+
+    <h4>2. decodificar_y_vender() — Procesamiento IA</h4>
+    <ul style="margin-left:20px;margin-bottom:16px;font-size:14px;line-height:2;">
+      <li>Envía el texto reconocido a Ollama con el catálogo actual</li>
+      <li>Fuerza respuesta JSON: <code>{"idSabor": X, "cantidad": Y}</code></li>
+      <li>Llama a <code>POST /ventas</code> si el JSON es válido</li>
+      <li>Maneja errores: sabor inexistente, stock insuficiente, error de red</li>
+    </ul>
+
+    <h4>3. hablar() — Síntesis de Voz</h4>
+    <pre><code>echo <span class="str">"Texto a decir"</span> | ./piper/piper --model voz_es.onnx --output_file salida.wav
+aplay -q salida.wav</code></pre>
+
+    <h3>Agente por Texto (modo debug)</h3>
+    <p><code>Local_agent_voz_texto.py</code> reemplaza el micrófono con <code>input()</code> de teclado. Útil para probar el pipeline de IA sin necesitar hardware de audio.</p>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 10. FLUJO DE TRABAJO -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s10">
+    <div class="section-header">
+      <div class="section-num">10</div>
+      <h2>Flujo de Trabajo Completo</h2>
+    </div>
+
+    <h3>Escenario 1: Venta Manual desde el Dashboard</h3>
+    <div class="flow">
+      <div class="flow-step" data-step="1">Operador abre el Dashboard en <strong>http://localhost:8501</strong></div>
+      <div class="flow-step" data-step="2">Navega a <strong>Ventas</strong> → pestaña "Nueva Venta"</div>
+      <div class="flow-step" data-step="3">Selecciona cantidad de cada sabor — el total se calcula automáticamente en tiempo real</div>
+      <div class="flow-step" data-step="4">Presiona <strong>"Finalizar Venta"</strong></div>
+      <div class="flow-step" data-step="5">Frontend llama a <span class="code-inline">POST /ventas</span> con los ítems</div>
+      <div class="flow-step" data-step="6">FastAPI ejecuta <span class="code-inline">realizar_venta_interna()</span> en transacción SQLite atómica</div>
+      <div class="flow-step" data-step="7">Trigger descuenta stock automáticamente → Dashboard muestra animación de globos ✅</div>
+    </div>
+
+    <h3>Escenario 2: Pedido por Chat de IA</h3>
+    <div class="flow">
+      <div class="flow-step" data-step="1">Usuario escribe en el chat: <em>"quiero 3 de fresa"</em></div>
+      <div class="flow-step" data-step="2">Frontend envía <span class="code-inline">POST /ai/chat {"message": "quiero 3 de fresa"}</span></div>
+      <div class="flow-step" data-step="3"><span class="code-inline">detectar_pedido()</span> identifica: intención "quiero" ✓ · sabor "Fresa" (ID 3) ✓ · cantidad 3 ✓</div>
+      <div class="flow-step" data-step="4">Se ejecuta <span class="code-inline">realizar_venta_interna()</span> (misma lógica que venta manual)</div>
+      <div class="flow-step" data-step="5">Chat responde: <em>"✅ ¡Pedido registrado! 3x Fresa | Total: $10,500 · Venta #15"</em></div>
+    </div>
+
+    <h3>Escenario 3: Pedido por Voz (Agente Offline)</h3>
+    <div class="flow">
+      <div class="flow-step" data-step="1">Operador activa el toggle <strong>"Activar Micro"</strong> en el sidebar del dashboard</div>
+      <div class="flow-step" data-step="2">API lanza <span class="code-inline">Local_agent_voz.py</span> como subproceso → Piper saluda al cliente por el altavoz</div>
+      <div class="flow-step" data-step="3">Cliente habla al micrófono: <em>"dame dos de chocolate"</em></div>
+      <div class="flow-step" data-step="4">Vosk transcribe a texto → Ollama extrae <span class="code-inline">{"idSabor": 2, "cantidad": 2}</span></div>
+      <div class="flow-step" data-step="5">Agente llama a <span class="code-inline">POST /ventas</span> → API registra la venta y actualiza stock</div>
+      <div class="flow-step" data-step="6">Piper sintetiza respuesta → altavoz reproduce: <em>"¡Excelente elección! Pedido procesado."</em></div>
+      <div class="flow-step" data-step="7">El ciclo vuelve a escuchar en el paso 3</div>
+    </div>
+
+    <h3>Escenario 4: Reabastecimiento de Inventario</h3>
+    <div class="flow">
+      <div class="flow-step" data-step="1">Operador navega a <strong>Compras</strong> → "Registrar Compra"</div>
+      <div class="flow-step" data-step="2">Ingresa la cantidad a comprar por sabor → el sistema calcula la inversión total</div>
+      <div class="flow-step" data-step="3">Presiona <strong>"Registrar Entrada"</strong> → frontend llama a <span class="code-inline">POST /compras</span></div>
+      <div class="flow-step" data-step="4">Trigger SQLite suma las cantidades al stock → inventario actualizado instantáneamente ✅</div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 11. DOCKER -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s11">
+    <div class="section-header">
+      <div class="section-num">11</div>
+      <h2>Despliegue con Docker</h2>
+    </div>
+    <p>El sistema está contenedorizado con <strong>tres servicios</strong> orquestados por Docker Compose.</p>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Servicio</th><th>Puerto</th><th>Descripción</th><th>Notas</th></tr></thead>
+        <tbody>
+          <tr><td>api</td><td>:8000</td><td>FastAPI + Uvicorn (backend)</td><td>Volumen persistente para la BD</td></tr>
+          <tr><td>app</td><td>:8501</td><td>Dashboard Streamlit (frontend)</td><td>Depende del servicio api</td></tr>
+          <tr><td>voz</td><td>—</td><td>Agente de Voz offline</td><td>Acceso a /dev/snd, network_mode: host</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert info">
+      <div class="alert-icon">ℹ️</div>
+      <div>El servicio <code>voz</code> usa <code>network_mode: host</code> para acceder correctamente al servidor de audio PulseAudio de la Raspberry Pi. Los modelos pesados se montan como volúmenes para no inflar la imagen Docker.</div>
+    </div>
+
+    <h3>Comandos Esenciales</h3>
+    <pre><code><span class="cm"># Construir y levantar todo</span>
+docker-compose up --build -d
+
+<span class="cm"># Ver logs en tiempo real</span>
+docker-compose logs -f
+
+<span class="cm"># Ver logs solo del agente de voz</span>
+docker-compose logs -f voz
+
+<span class="cm"># Detener todos los servicios</span>
+docker-compose down
+
+<span class="cm"># Reiniciar un servicio específico</span>
+docker-compose restart api</code></pre>
+  </div>
+
+  <!-- ══════════════════════════════════════════════════════ -->
+  <!-- 12. RASPBERRY PI -->
+  <!-- ══════════════════════════════════════════════════════ -->
+  <div class="section" id="s12">
+    <div class="section-header">
+      <div class="section-num">12</div>
+      <h2>Despliegue en Raspberry Pi</h2>
+    </div>
+    <p>El script <code>deploy_raspberry.sh</code> automatiza el despliegue completo en una Raspberry Pi 4 con un único comando:</p>
+    <pre><code>bash deploy_raspberry.sh</code></pre>
+
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Paso</th><th>Acción</th><th>Detalle</th></tr></thead>
+        <tbody>
+          <tr><td>[1/6]</td><td>Dependencias del sistema</td><td>portaudio, alsa-utils, wget, curl</td></tr>
+          <tr><td>[2/6]</td><td>Instalar Docker</td><td>Script oficial de Docker + configuración sin sudo</td></tr>
+          <tr><td>[3/6]</td><td>Instalar Ollama + modelo</td><td>Ollama en el HOST + modelo llama3.2 descargado</td></tr>
+          <tr><td>[4/6]</td><td>Modelo Vosk ES</td><td>vosk-model-small-es-0.42 (~40 MB)</td></tr>
+          <tr><td>[5/6]</td><td>Piper TTS ARM64</td><td>Binario ARM64 + modelo voz español mexicano desde HuggingFace</td></tr>
+          <tr><td>[6/6]</td><td>Docker Compose</td><td>Build + docker-compose up -d</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="alert success">
+      <div class="alert-icon">✅</div>
+      <div>Al finalizar el script, el sistema está completamente operativo y accesible en la red local:<br>
+      <strong>Dashboard:</strong> <code>http://&lt;IP-RPI&gt;:8501</code> &nbsp;|&nbsp;
+      <strong>API:</strong> <code>http://&lt;IP-RPI&gt;:8000</code></div>
+    </div>
+
+    <h3>Variables de Entorno</h3>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Variable</th><th>Default</th><th>Descripción</th></tr></thead>
+        <tbody>
+          <tr><td>API_URL</td><td>http://localhost:8000</td><td>URL de la API (usada por frontend y agentes)</td></tr>
+          <tr><td>OLLAMA_MODEL</td><td>qwen2.5:0.5b</td><td>Modelo LLM a usar con Ollama</td></tr>
+          <tr><td>PULSE_RUNTIME_PATH</td><td>/run/user/1000/pulse</td><td>Socket de PulseAudio para Docker en Raspberry Pi</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<div class="footer">
+  Documentación técnica de <span>HeladerIA</span> · Generada el 1 de junio de 2026 · Repositorio devperez08/HeladerIA
+</div>
+
+<script>
+  // Print button helper
+  document.addEventListener('keydown', function(e) {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+      window.print();
+    }
+  });
+</script>
+</body>
+</html>
